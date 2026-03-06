@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT UC Monitor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1 class="logo"><span class="logo-icon">
+                <svg viewBox="0 0 64 64" width="48" height="48">
+                    <!-- Hood -->
+                    <path d="M32 4 C16 4 8 16 8 28 L8 32 C8 36 12 40 16 40 L48 40 C52 40 56 36 56 32 L56 28 C56 16 48 4 32 4" fill="#2d5a27"/>
+                    <!-- Hood shadow -->
+                    <path d="M32 4 C20 4 12 12 10 22 C14 18 22 14 32 14 C42 14 50 18 54 22 C52 12 44 4 32 4" fill="#3d7a37"/>
+                    <!-- Face -->
+                    <ellipse cx="32" cy="36" rx="16" ry="14" fill="#c4956a"/>
+                    <!-- Face shadow -->
+                    <ellipse cx="32" cy="38" rx="14" ry="10" fill="#b8845a"/>
+                    <!-- Left ear -->
+                    <circle cx="16" cy="32" r="5" fill="#c4956a"/>
+                    <circle cx="16" cy="32" r="3" fill="#e8c4a0"/>
+                    <!-- Right ear -->
+                    <circle cx="48" cy="32" r="5" fill="#c4956a"/>
+                    <circle cx="48" cy="32" r="3" fill="#e8c4a0"/>
+                    <!-- Eyes -->
+                    <ellipse cx="25" cy="34" rx="4" ry="5" fill="#fff"/>
+                    <ellipse cx="39" cy="34" rx="4" ry="5" fill="#fff"/>
+                    <circle cx="26" cy="34" r="2.5" fill="#2a1a0a"/>
+                    <circle cx="40" cy="34" r="2.5" fill="#2a1a0a"/>
+                    <circle cx="27" cy="33" r="1" fill="#fff"/>
+                    <circle cx="41" cy="33" r="1" fill="#fff"/>
+                    <!-- Nose -->
+                    <ellipse cx="32" cy="40" rx="5" ry="3" fill="#8b6346"/>
+                    <circle cx="29" cy="40" r="1" fill="#5a3d2a"/>
+                    <circle cx="35" cy="40" r="1" fill="#5a3d2a"/>
+                    <!-- Smile -->
+                    <path d="M26 45 Q32 50 38 45" stroke="#5a3d2a" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <!-- Feather on hood -->
+                    <path d="M32 2 L34 12 L32 8 L30 12 Z" fill="#d4af37"/>
+                </svg>
+            </span> NFT UC Monitor</h1>
+            <p class="tagline">Monitor your NFTs and never miss an undercut</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Profile Section -->
+            <section class="section profile-section">
+                <div class="profile-header">
+                    <h2>👤 Perfil</h2>
+                    <div class="profile-controls">
+                        <select id="profile-select" class="profile-select">
+                            <option value="">Selecione um perfil...</option>
+                        </select>
+                        <button id="create-profile-btn" class="btn btn-secondary">+ Novo</button>
+                        <button id="delete-profile-btn" class="btn btn-danger" style="display: none;">🗑️ Deletar</button>
+                        <button id="admin-btn" class="btn btn-secondary" title="Admin">⚙️ Admin</button>
+                    </div>
+                </div>
+                <!-- Create Profile Modal (inline) -->
+                <div id="create-profile-form" class="create-profile-form" style="display: none;">
+                    <input type="text" id="new-profile-name" placeholder="Nome do perfil (ex: MrOliver)" class="setting-input">
+                    <button id="confirm-create-profile" class="btn btn-primary">Criar</button>
+                    <button id="cancel-create-profile" class="btn btn-secondary">Cancelar</button>
+                </div>
+            </section>
+
+            <!-- Top Row: Wallets + Live Alerts -->
+            <div class="top-row">
+                <!-- Seção de Carteiras -->
+                <section class="section wallets-section">
+                    <h2>🔗 Wallets</h2>
+                    <div class="wallet-input">
+                        <input type="text" id="wallet-address" placeholder="0x... paste wallet address">
+                        <button id="add-wallet" class="btn btn-primary" type="button">Add</button>
+                    </div>
+                    <div class="wallets-list" id="wallets-list">
+                        <!-- Carteiras serão inseridas aqui -->
+                    </div>
+                </section>
+
+                <!-- Seção de Alertas em Tempo Real -->
+                <section class="section alerts-section">
+                    <h2>⚠️ Live Undercut Alerts</h2>
+                    <div class="live-alerts" id="live-alerts">
+                        <div class="no-alerts">No undercuts detected</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Grid de Stats -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-nfts">0</div>
+                    <div class="stat-label" id="nfts-label">NFT</div>
+                </div>
+                <div class="stat-card value-card">
+                    <div class="value-row">
+                        <div class="value-item">
+                            <div class="stat-value" id="total-value">0 ETH</div>
+                            <div class="stat-label">Floor</div>
+                        </div>
+                        <div class="value-divider"></div>
+                        <div class="value-item">
+                            <div class="stat-value" id="total-bids">0 ETH</div>
+                            <div class="stat-label">Bids</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card alert-card">
+                    <div class="stat-value" id="total-undercuts">0</div>
+                    <div class="stat-label">Undercuts Hoje</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="last-update">--:--</div>
+                    <div class="stat-label">Última Atualização</div>
+                </div>
+            </section>
+
+            <!-- Seção de NFTs -->
+            <section class="section nfts-section">
+                <div class="section-header">
+                    <h2>NFT's <span id="hidden-count" class="hidden-count"></span></h2>
+                    <div class="header-buttons">
+                        <div class="filter-dropdown">
+                            <button id="filter-btn" class="btn btn-secondary">🔽 Sort</button>
+                            <div class="dropdown-menu" id="filter-menu">
+                                <div class="dropdown-item" data-sort="price-asc">Price: Low → High</div>
+                                <div class="dropdown-item" data-sort="price-desc">Price: High → Low</div>
+                                <div class="dropdown-item" data-sort="bid-asc">Bid: Low → High</div>
+                                <div class="dropdown-item" data-sort="bid-desc">Bid: High → Low</div>
+                            </div>
+                        </div>
+                        <div class="filter-dropdown">
+                            <button id="size-btn" class="btn btn-secondary">📐 Size</button>
+                            <div class="dropdown-menu" id="size-menu">
+                                <div class="dropdown-item" data-size="small">Small</div>
+                                <div class="dropdown-item" data-size="medium">Medium</div>
+                                <div class="dropdown-item" data-size="large">Large</div>
+                                <div class="dropdown-item" data-size="list">List</div>
+                            </div>
+                        </div>
+                        <button id="refresh-nfts" class="btn btn-secondary">🔄 Refresh</button>
+                    </div>
+                </div>
+                <div class="nfts-grid size-small" id="nfts-grid">
+                    <div class="loading-placeholder">
+                        <p>Add a wallet to see your NFTs</p>
+                    </div>
+                </div>
+
+                <!-- Hidden NFTs Section -->
+                <div class="hidden-nfts-section" id="hidden-nfts-section" style="display: none;">
+                    <div class="hidden-header" onclick="toggleHiddenSection()">
+                        <span>👁️‍🗨️ Hidden (<span id="hidden-total">0</span>)</span>
+                        <span class="toggle-icon" id="hidden-toggle-icon">▼</span>
+                    </div>
+                    <div class="hidden-grid" id="hidden-grid">
+                        <!-- Hidden NFTs will be rendered here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção de Alertas -->
+            <section class="section alerts-section">
+                <div class="section-header">
+                    <h2>🚨 Alertas Recentes</h2>
+                    <button id="clear-alerts" class="btn btn-secondary">Limpar</button>
+                </div>
+                <div class="alerts-list" id="alerts-list">
+                    <div class="no-alerts">Nenhum alerta ainda. Undercuts aparecerão aqui.</div>
+                </div>
+            </section>
+
+            <!-- Seção de Configurações -->
+            <section class="section settings-section">
+                <h2>⚙️ Configurações de Alerta</h2>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="alert-dashboard" checked>
+                            <span class="checkmark"></span>
+                            Alertas no Dashboard
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="alert-discord">
+                            <span class="checkmark"></span>
+                            Discord
+                        </label>
+                        <small class="setting-hint">Ative para receber alertas no Discord (o admin configurará o canal)</small>
+                    </div>
+                    <div class="setting-item" id="discord-nfts-section" style="display: none;">
+                        <label>NFTs para alerta especial no Discord:</label>
+                        <div id="discord-nfts-list" class="discord-nfts-list">
+                            <!-- NFTs serão listadas aqui -->
+                        </div>
+                        <small class="setting-hint">Selecione as NFTs que vão receber mensagem direta no Discord quando houver undercut</small>
+                    </div>
+                    <div class="setting-item">
+                        <label>Intervalo de verificação:</label>
+                        <select id="check-interval" class="setting-select">
+                            <option value="1">1 minuto</option>
+                            <option value="5" selected>5 minutos</option>
+                            <option value="15">15 minutos</option>
+                            <option value="30">30 minutos</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="save-settings" class="btn btn-primary">Salvar Configurações</button>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal de Detalhes do NFT -->
+    <div class="modal" id="nft-modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modal-close">&times;</span>
+            <div class="modal-body" id="modal-body">
+                <!-- Conteúdo do modal -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Admin -->
+    <div class="modal" id="admin-modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="modal-close" id="admin-modal-close">&times;</span>
+            <div class="modal-body">
+                <h2 style="margin-bottom: 20px;">⚙️ Admin - Gerenciar Webhooks</h2>
+
+                <!-- Login de Admin -->
+                <div id="admin-login">
+                    <p>Digite a senha de administrador:</p>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <input type="password" id="admin-password" class="setting-input" placeholder="Senha" style="flex: 1;">
+                        <button id="admin-login-btn" class="btn btn-primary">Entrar</button>
+                    </div>
+                    <p id="admin-login-error" style="color: #ff6b6b; margin-top: 10px; display: none;">Senha incorreta!</p>
+                </div>
+
+                <!-- Painel de Admin -->
+                <div id="admin-panel" style="display: none;">
+                    <p style="margin-bottom: 15px; color: #888;">Configure os webhooks do Discord para cada perfil. Crie um canal no Discord para cada perfil e adicione o webhook abaixo.</p>
+
+                    <div id="admin-profiles-list" style="max-height: 400px; overflow-y: auto;">
+                        <!-- Perfis serão inseridos aqui -->
+                    </div>
+
+                    <button id="admin-refresh" class="btn btn-secondary" style="margin-top: 15px;">🔄 Atualizar Lista</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>NFT Undercut Monitor © 2026 | Dados: OpenSea & Blur</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

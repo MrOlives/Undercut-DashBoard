@@ -1,0 +1,20 @@
+# Environment variables (NUNCA commitar isso!)
+.env
+
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+
+# User data (perfis, webhooks, etc)
+profiles.json
+webhooks.json
+
+# Backups
+*.bak*
+*.backup_*
+
+# Logs
+*.log
+/tmp/
