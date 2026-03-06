@@ -28,6 +28,8 @@ const OPENSEA_BASE_URL = 'https://api.opensea.io/api/v2';
 const PROFILES_FILE = path.join(__dirname, 'profiles.json');
 const WEBHOOKS_FILE = path.join(__dirname, 'webhooks.json');
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // Vem do .env
+console.log('[STARTUP] ADMIN_PASSWORD carregada:', process.env.ADMIN_PASSWORD ? 'SIM (do env)' : 'NÃO (usando fallback admin123)');
+console.log('[STARTUP] Valor da senha (primeiros 3 chars):', ADMIN_PASSWORD.substring(0, 3) + '...');
 
 function loadProfiles() {
     try {
@@ -163,9 +165,15 @@ app.delete('/api/profiles/:name', (req, res) => {
 // ===========================================
 app.post('/api/admin/login', (req, res) => {
     const { password } = req.body;
+    console.log('[ADMIN LOGIN] Tentativa de login');
+    console.log('[ADMIN LOGIN] Senha recebida:', JSON.stringify(password));
+    console.log('[ADMIN LOGIN] Senha esperada:', JSON.stringify(ADMIN_PASSWORD));
+    console.log('[ADMIN LOGIN] Tamanho recebida:', password?.length, 'Tamanho esperada:', ADMIN_PASSWORD?.length);
     if (password === ADMIN_PASSWORD) {
+        console.log('[ADMIN LOGIN] Sucesso!');
         res.json({ success: true });
     } else {
+        console.log('[ADMIN LOGIN] Falhou - senhas diferentes');
         res.status(401).json({ error: 'Senha incorreta' });
     }
 });
