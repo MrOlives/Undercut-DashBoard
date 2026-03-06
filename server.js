@@ -27,8 +27,8 @@ const OPENSEA_BASE_URL = 'https://api.opensea.io/api/v2';
 // ===========================================
 const PROFILES_FILE = path.join(__dirname, 'profiles.json');
 const WEBHOOKS_FILE = path.join(__dirname, 'webhooks.json');
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // Vem do .env
-console.log('[STARTUP] ADMIN_PASSWORD carregada:', process.env.ADMIN_PASSWORD ? 'SIM (do env)' : 'NÃO (usando fallback admin123)');
+const ADMIN_PASSWORD = process.env.ADMIN_PASS || 'admin123'; // Vem do .env
+console.log('[STARTUP] ADMIN_PASS carregada:', process.env.ADMIN_PASS ? 'SIM (do env)' : 'NÃO (usando fallback admin123)');
 console.log('[STARTUP] Valor da senha (primeiros 3 chars):', ADMIN_PASSWORD.substring(0, 3) + '...');
 
 function loadProfiles() {
