@@ -27,7 +27,7 @@ const OPENSEA_BASE_URL = 'https://api.opensea.io/api/v2';
 // ===========================================
 const PROFILES_FILE = path.join(__dirname, 'profiles.json');
 const WEBHOOKS_FILE = path.join(__dirname, 'webhooks.json');
-const ADMIN_PASSWORD = 'nftadmin2024'; // Senha do admin
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // Vem do .env
 
 function loadProfiles() {
     try {
