@@ -2,8 +2,10 @@
 // NFT UNDERCUT MONITOR - FRONTEND
 // ===========================================
 
-// API URL
-const API_URL = 'http://localhost:3001';
+// API URL - Detecta automaticamente se está em produção ou desenvolvimento
+const API_URL = window.location.hostname === 'localhost'
+    ? 'http://localhost:3001'
+    : window.location.origin;
 
 // Estado global
 let state = {
