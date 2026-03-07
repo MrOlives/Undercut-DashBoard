@@ -309,6 +309,7 @@ async function openSeaRequest(endpoint, params = {}) {
     RATE_LIMIT.lastRequest = Date.now();
 
     console.log(`[API] Chamando: ${endpoint}`);
+    console.log(`[API] API Key (length): ${OPENSEA_API_KEY?.length}, starts with: ${OPENSEA_API_KEY?.substring(0, 8)}...`);
     try {
         const response = await axios.get(`${OPENSEA_BASE_URL}${endpoint}`, {
             headers: {
@@ -320,6 +321,10 @@ async function openSeaRequest(endpoint, params = {}) {
         console.log(`[API] Sucesso: ${endpoint}`);
         return response.data;
     } catch (error) {
+        if (error.response?.status === 401) {
+            console.error(`[API] 401 UNAUTHORIZED - API Key inválida ou sem permissão`);
+            console.error(`[API] Resposta:`, error.response?.data);
+        }
         if (error.response?.status === 429) {
             console.log(`[API] Rate limit (429) em ${endpoint}, aguardando 2s...`);
             await delay(2000);
