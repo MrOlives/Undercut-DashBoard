@@ -287,9 +287,27 @@ app.delete('/api/wallets/:address', (req, res) => {
 });
 
 // ===========================================
-// OPENSEA API
+// OPENSEA API - Rate Limiter
 // ===========================================
+// Delay helper
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+// OpenSea v2: ~5 requests/segundo (conservador)
+const RATE_LIMIT = {
+    minInterval: 300,  // 300ms entre requests = max ~3/segundo
+    lastRequest: 0
+};
+
 async function openSeaRequest(endpoint, params = {}) {
+    // Rate limiting
+    const now = Date.now();
+    const timeSinceLastRequest = now - RATE_LIMIT.lastRequest;
+    const waitTime = Math.max(0, RATE_LIMIT.minInterval - timeSinceLastRequest);
+    if (waitTime > 0) {
+        await delay(waitTime);
+    }
+    RATE_LIMIT.lastRequest = Date.now();
+
     console.log(`[API] Chamando: ${endpoint}`);
     try {
         const response = await axios.get(`${OPENSEA_BASE_URL}${endpoint}`, {
@@ -303,8 +321,11 @@ async function openSeaRequest(endpoint, params = {}) {
         return response.data;
     } catch (error) {
         if (error.response?.status === 429) {
-            console.log(`[API] Rate limit (429) em ${endpoint}, aguardando...`);
-            await new Promise(r => setTimeout(r, 1000));
+            console.log(`[API] Rate limit (429) em ${endpoint}, aguardando 2s...`);
+            await delay(2000);
+            // Tentar novamente após wait
+            RATE_LIMIT.lastRequest = 0; // Reset para permitir nova tentativa
+            return openSeaRequest(endpoint, params);
         } else if (error.response?.status !== 404) {
             console.error(`[API] ERRO ${endpoint}:`, error.response?.status, error.message);
         } else {
@@ -313,9 +334,6 @@ async function openSeaRequest(endpoint, params = {}) {
         return null;
     }
 }
-
-// Delay helper
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // ===========================================
 // NFTs
@@ -401,7 +419,6 @@ async function loadNFTsFromWallets() {
 
     for (const wallet of db.wallets) {
         const nfts = await getNFTsFromWallet(wallet);
-        await delay(300);
 
         for (const nft of nfts) {
             const nftId = `${nft.contract}-${nft.identifier}`;
@@ -448,7 +465,6 @@ async function enrichNFTData() {
             try {
                 // Buscar listings - só atualiza se a API responder
                 const listings = await getListings(nft.contract, nft.tokenId);
-                await delay(300);
 
                 if (listings !== null && listings !== undefined) {
                     let lowestListing = null;
@@ -491,7 +507,6 @@ async function enrichNFTData() {
 
                 // Buscar offers individuais
                 const offers = await getOffers(nft.contract, nft.tokenId);
-                await delay(300);
 
                 let highestOffer = 0;
                 if (offers !== null && offers !== undefined && offers.length > 0) {
@@ -515,7 +530,6 @@ async function enrichNFTData() {
 
                 // Buscar collection offers (incluindo trait offers)
                 const collectionOffers = await getCollectionOffers(nft.collectionName);
-                await delay(300);
 
                 let bestCollectionOffer = 0;
                 let bestTraitOffer = 0;
@@ -616,7 +630,6 @@ async function monitorCollectionEvents() {
 
         try {
             const events = await getCollectionEvents(collection);
-            await delay(300);
 
             for (const event of events || []) {
                 const eventNft = event.nft;
