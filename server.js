@@ -21,6 +21,7 @@ app.use(express.static(__dirname));
 // OpenSea API
 const OPENSEA_API_KEY = process.env.OPENSEA_API_KEY;
 const OPENSEA_BASE_URL = 'https://api.opensea.io/api/v2';
+console.log('[STARTUP] OPENSEA_API_KEY carregada:', OPENSEA_API_KEY ? 'SIM (' + OPENSEA_API_KEY.substring(0, 8) + '...)' : 'NÃO!');
 
 // ===========================================
 // DATABASE (profiles.json)
@@ -289,6 +290,7 @@ app.delete('/api/wallets/:address', (req, res) => {
 // OPENSEA API
 // ===========================================
 async function openSeaRequest(endpoint, params = {}) {
+    console.log(`[API] Chamando: ${endpoint}`);
     try {
         const response = await axios.get(`${OPENSEA_BASE_URL}${endpoint}`, {
             headers: {
@@ -297,13 +299,16 @@ async function openSeaRequest(endpoint, params = {}) {
             },
             params
         });
+        console.log(`[API] Sucesso: ${endpoint}`);
         return response.data;
     } catch (error) {
         if (error.response?.status === 429) {
-            console.log('Rate limit (429), aguardando...');
+            console.log(`[API] Rate limit (429) em ${endpoint}, aguardando...`);
             await new Promise(r => setTimeout(r, 1000));
         } else if (error.response?.status !== 404) {
-            console.error(`OpenSea API error ${endpoint}:`, error.message);
+            console.error(`[API] ERRO ${endpoint}:`, error.response?.status, error.message);
+        } else {
+            console.log(`[API] 404 em ${endpoint} (normal para alguns endpoints)`);
         }
         return null;
     }
@@ -316,7 +321,9 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 // NFTs
 // ===========================================
 async function getNFTsFromWallet(wallet) {
+    console.log(`[NFT] Buscando NFTs da wallet: ${wallet}`);
     const data = await openSeaRequest(`/chain/ethereum/account/${wallet}/nfts`);
+    console.log(`[NFT] Resposta da API:`, data ? `${data.nfts?.length || 0} NFTs encontradas` : 'null/erro');
     return data?.nfts || [];
 }
 
@@ -369,6 +376,14 @@ function applyPendingNftData() {
 
 // Carregar NFTs de todas as wallets
 async function loadNFTsFromWallets() {
+    console.log(`[LOAD] Iniciando carregamento de NFTs...`);
+    console.log(`[LOAD] Wallets registradas:`, db.wallets);
+
+    if (!db.wallets || db.wallets.length === 0) {
+        console.log(`[LOAD] ERRO: Nenhuma wallet registrada!`);
+        return;
+    }
+
     // Preservar dados antigos dos NFTs
     // Preservar apenas dados de preco (purchasePrice e hidden vêm do perfil)
     const oldNftData = {};
