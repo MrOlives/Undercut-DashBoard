@@ -706,17 +706,26 @@ async function sendDiscordAlert(nft, alert) {
     const profile = data.profiles[data.activeProfile];
     const settings = profile?.settings || {};
 
+    console.log(`[DISCORD] Tentando enviar alerta para perfil: ${data.activeProfile}`);
+    console.log(`[DISCORD] Config alertDiscord: ${settings.alertDiscord}`);
+    console.log(`[DISCORD] Webhooks disponíveis:`, Object.keys(loadWebhooks()));
+
     // Verificar se alertas Discord estão ativados no perfil
-    if (!settings.alertDiscord) return;
+    if (!settings.alertDiscord) {
+        console.log(`[DISCORD] Alertas Discord desativados para este perfil`);
+        return;
+    }
 
     // Buscar webhook do admin para este perfil
     const webhooks = loadWebhooks();
     const webhookUrl = webhooks[data.activeProfile];
 
     if (!webhookUrl) {
-        console.log(`Sem webhook configurado para perfil: ${data.activeProfile}`);
+        console.log(`[DISCORD] Sem webhook configurado para perfil: ${data.activeProfile}`);
         return;
     }
+
+    console.log(`[DISCORD] Webhook encontrado, enviando...`);
 
     const isSpecialNft = settings.discordNfts?.includes(nft.id);
 
